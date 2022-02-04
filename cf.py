@@ -1,13 +1,12 @@
 #!/usr/bin/env python3.10
 
 import argparse
-from base64 import decode
-from email.policy import default
 import json
 import os
 from pathlib import Path
 import pathlib
 import shutil
+import subprocess
 
 def set_workdir():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -56,8 +55,7 @@ def gen_solution_path(contest, taskLetter):
 
     return Path.cwd().joinpath('solutions').joinpath(dirA).joinpath(dirB).joinpath(fileName)
 
-def try_create_file(contest, taskLetter):
-    path = gen_solution_path(contest, taskLetter)
+def try_create_file(path):
     pathlib.Path(path.parent).mkdir(parents=True, exist_ok=True)
 
     if path.is_file():
@@ -66,13 +64,17 @@ def try_create_file(contest, taskLetter):
     templatePath = Path('./template.cpp')
     shutil.copy(templatePath, path)
 
+def open_file_in_ide(path):
+    subprocess.check_call(["code", "-r", path])
+
 def solve(args):
     if args.task_id is None:
         raise ValueError("Task ID was not specified")
 
     contest, taskLetter = parse_task_id(args.task_id)
-    
-    try_create_file(contest, taskLetter)
+    path = gen_solution_path(contest, taskLetter)
+    try_create_file(path)
+    open_file_in_ide(path)
 
 def handle_args(args):
     print(args)
