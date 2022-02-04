@@ -25,6 +25,10 @@ template <typename T>           size_t lg2(T x)  {return lg<T,  2>(x);}
 void run() {
     int n;
     cin >> n;
+
+    auto m = n % 10;
+    auto d = lg10(n) + 1;
+    cout << (m - 1) * 10 + (d + 1) * d / 2 << endl;  
 }
 
 int main() {

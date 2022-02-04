@@ -6,5 +6,8 @@
 # Unignore all dirs
 !*/
 
+# Input file
+input.txt
+
 # Config file
 cf.json
