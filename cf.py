@@ -13,19 +13,20 @@ def set_workdir():
 
 def make_default_config():
     return {
-        "last_solved": None
+        'last_solved': None
     }
 
 def load_config(path='./cf.json'):
-    filePath = Path(path)
-    if not filePath.is_file():
-        print("Config file does not exist, using default values")
+    file_path = Path(path)
+    if not file_path.is_file():
+        print('Config file does not exist, using default values')
         return make_default_config()
 
     with open(path, 'r') as file:
         return json.load(file)
 
-def save_config(config, path='./cf.json'):
+def save_config(config, args, path='./cf.json'):
+    config['last_solved'] = args.task_id
     with open(path, 'w', encoding='utf-8') as file:
         return json.dump(config, file, ensure_ascii=False, indent=4)
 
@@ -33,7 +34,9 @@ def build_args_parser(config):
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='subcommand')
     solve_parser = subparsers.add_parser('solve')
-    solve_parser.add_argument('-t', type=str, default=config['last_solved'], dest="task_id")
+    solve_parser.add_argument('-t', type=str, default=config['last_solved'], dest='task_id')
+    test_parser = subparsers.add_parser('test')
+    test_parser.add_argument('-t', type=str, default=config['last_solved'], dest='task_id')
     return parser
 
 def parse_task_id(task_id):
@@ -46,12 +49,12 @@ def parse_task_id(task_id):
 
     return task_id[0 : pos], task_id[pos]
 
-def gen_solution_path(contest, taskLetter):
+def gen_solution_path(contest, task_letter):
     hundreds = int(contest) // 100
     dirA = str(hundreds).zfill(2) + 'XX'
 
     dirB = contest
-    fileName = contest + taskLetter + '.cpp'
+    fileName = contest + task_letter + '.cpp'
 
     return Path.cwd().joinpath('solutions').joinpath(dirA).joinpath(dirB).joinpath(fileName)
 
@@ -65,22 +68,73 @@ def try_create_file(path):
     shutil.copy(templatePath, path)
 
 def open_file_in_ide(path):
-    subprocess.check_call(["code", "-r", path])
+    subprocess.check_call(['code', '-r', path])
 
 def solve(args):
     if args.task_id is None:
-        raise ValueError("Task ID was not specified")
+        raise ValueError('Task ID was not specified')
 
-    contest, taskLetter = parse_task_id(args.task_id)
-    path = gen_solution_path(contest, taskLetter)
+    contest, task_letter = parse_task_id(args.task_id)
+    path = gen_solution_path(contest, task_letter)
     try_create_file(path)
     open_file_in_ide(path)
+
+def compile_solution(src_path, output_path):
+    print('Compiling...')
+    subprocess.check_call(['g++', src_path, '-o', output_path])
+
+def get_words(file_path):
+    with open(file_path) as file:
+        for line in file:
+            for word in line.split():
+                yield word
+
+def run_solution(solution_path, input_path, output_path):
+    with open(input_path) as fin:
+        with open(output_path, 'w') as fout:               
+            subprocess.run([solution_path], stdin=fin, stdout=fout)
+
+def check_answer(output_path, answer_path):
+    output_words = get_words(output_path)
+    answer_words = get_words(answer_path)
+    for out, ans in zip(output_words, answer_words):
+        if out != ans:
+            print(f'Wrong answer: expected {ans}, got {out}')
+            return
+    for ans in answer_words:
+        print(f'Wrong answer: expected {ans}, got EOF')
+        return
+    print("PASSED")
+
+def test_solution(solution_path):
+    print('Testing...')
+
+    solution_path = 'tmp/solution'
+    input_txt = 'input.txt'
+    output_txt = 'tmp/output.txt'
+    answer_txt = 'answer.txt'
+
+    run_solution(solution_path, input_txt, output_txt)
+    check_answer(output_txt, answer_txt)
+
+def test(args):
+    if args.task_id is None:
+        raise ValueError('Task ID was not specified')
+
+    contest, task_letter = parse_task_id(args.task_id)
+    path = gen_solution_path(contest, task_letter)
+    output_path = 'tmp/solution'
+    Path('tmp').mkdir(exist_ok=True)
+    compile_solution(path, output_path)
+    test_solution(output_path)
 
 def handle_args(args):
     print(args)
     match args.subcommand:
         case 'solve':
             solve(args)
+        case 'test':
+            test(args)
         case _:
             raise ValueError(f'Invalid subcommand {args.subcommand}')
 
@@ -91,7 +145,7 @@ def main():
     parser = build_args_parser(config)
     args = parser.parse_args()
     handle_args(args)
-    save_config(config)
+    save_config(config, args)
 
 if __name__ == '__main__':
     main()

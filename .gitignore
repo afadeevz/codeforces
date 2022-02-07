@@ -6,8 +6,12 @@
 # Unignore all dirs
 !*/
 
-# Input file
+# tmp dir
+tmp/
+
+# Input and answer files
 input.txt
+answer.txt
 
 # Config file
 cf.json
