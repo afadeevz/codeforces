@@ -9,7 +9,12 @@ using ULL = unsigned long long;
 
 #define SORT(x) sort(x.begin(), x.end())
 #define RSORT(x) sort(x.rbegin(), x.rend())
-#define READN(x, n) for(size_t i = 0, i < n; i++) {cin >> x[i];}
+
+template <typename T> void sort2(T& a, T& b) {if (a > b) swap(a, b);}
+template <typename T> void sort3(T& a, T& b, T& c) {sort2(a, b); sort2(a, c); sort2(b, c);}
+template <typename T> void sort4(T& a, T& b, T& c, T& d) {sort2(a, b); sort2(c, d); sort2(a, c); sort2(b, d); sort2(b, c);}
+
+template <typename T> bool isSorted(T a) {for (auto it = a.begin() + 1; it != a.end(); it++) {if (*it < *(it - 1)) {return false;}} return true;}
 
 template <typename T>             inline T         read()         {T r; cin >> r; return r;}
 template <typename T>             inline vector<T> readVec(size_t n = 0) {if (!n) {cin >> n;} vector<T> r; r.resize(n); for (size_t i = 0; i < n; i++) {cin >> r[i];} return r;}
@@ -19,10 +24,6 @@ template <typename T, typename U> inline map<T, U> readMap(size_t n = 0) {if (!n
 template <typename T, size_t B> size_t lg(T x)   {size_t r; while (x >= B) {x /= B; r++;} return r;}
 template <typename T>           size_t lg10(T x) {return lg<T, 10>(x);}
 template <typename T>           size_t lg2(T x)  {return lg<T,  2>(x);}
-
-template <typename T> void sort2(T& a, T& b) {if (a > b) swap(a, b);}
-template <typename T> void sort3(T& a, T& b, T& c) {sort2(a, b); sort2(a, c); sort2(b, c);}
-template <typename T> void sort4(T& a, T& b, T& c, T& d) {sort2(a, b); sort2(c, d); sort2(a, c); sort2(b, d); sort2(b, c);}
 
 template <typename T> string toStr(T x) {return to_string(x);}
 LL str2int(string s) {return stoll(s);}
@@ -35,6 +36,12 @@ ULL str2uint(string s) {return stoull(s);}
 void run() {
     int n;
     cin >> n;
+    auto a = readVec<int>(n);
+    if (a[0] == n || a[n-1] == 1) {
+        cout << "NO\n";
+    } else {
+        cout << "YES\n";
+    }
 }
 
 int main() {

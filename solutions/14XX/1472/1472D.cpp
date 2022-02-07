@@ -35,6 +35,28 @@ ULL str2uint(string s) {return stoull(s);}
 void run() {
     int n;
     cin >> n;
+    auto a = readVec<LL>(n);
+    RSORT(a);
+
+    LL aa = 0, bb = 0;
+    bool alice = true;
+    for (int i = 0; i < n; i++) {
+        if (alice && a[i] % 2 == 0) {
+            aa += a[i];
+        } else if (!alice && a[i] % 2 == 1) {
+            bb += a[i];
+        }
+
+        alice = !alice;
+    }
+
+    if (aa > bb) {
+        cout << "Alice\n";
+    } else if (aa < bb) {
+        cout << "Bob\n";
+    } else {
+        cout << "Tie\n";
+    }
 }
 
 int main() {

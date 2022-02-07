@@ -30,11 +30,16 @@ ULL str2uint(string s) {return stoull(s);}
 
 #pragma endregion
 
-#define MULTI_TEST
+// #define MULTI_TEST
 
 void run() {
-    int n;
-    cin >> n;
+    int n1, n2;
+    cin >> n1 >> n2;
+    if (n1 > n2) {
+        cout << "First\n";
+    } else {
+        cout << "Second\n";
+    }
 }
 
 int main() {
