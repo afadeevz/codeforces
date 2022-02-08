@@ -81,7 +81,7 @@ def solve(args):
 
 def compile_solution(src_path, output_path):
     print('Compiling...')
-    subprocess.check_call(['g++', src_path, '-o', output_path])
+    subprocess.check_call(['g++', '-Os', '-std=gnu++2a', src_path, '-o', output_path])
 
 def get_words(file_path):
     with open(file_path) as file:
@@ -92,7 +92,7 @@ def get_words(file_path):
 def run_solution(solution_path, input_path, output_path):
     with open(input_path) as fin:
         with open(output_path, 'w') as fout:               
-            subprocess.run([solution_path], stdin=fin, stdout=fout)
+            subprocess.run([solution_path], stdin=fin, stdout=fout, timeout=5)
 
 def check_answer(output_path, answer_path):
     output_words = get_words(output_path)
@@ -100,9 +100,11 @@ def check_answer(output_path, answer_path):
     for out, ans in zip(output_words, answer_words):
         if out != ans:
             print(f'Wrong answer: expected {ans}, got {out}')
+            print("FAILED")
             return
     for ans in answer_words:
         print(f'Wrong answer: expected {ans}, got EOF')
+        print("FAILED")
         return
     print("PASSED")
 
