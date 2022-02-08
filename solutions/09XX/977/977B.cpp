@@ -37,8 +37,6 @@ ULL str2uint(string s) {return stoull(s);}
 using str = string;
 using sv = string_view;
 
-#define vec2(T, V, M, N, X) vector<vector<T>> V(M, vector<T>(N, X))
-
 template <typename T, typename F> auto mapFind(T& m, F f) {return std::max_element(m.begin(), m.end(), f);}
 template <typename T> auto mapMaxKey(T& m) {return mapFind(m, [](auto a, auto b) {return a.X < b.X;});}
 template <typename T> auto mapMaxVal(T& m) {return mapFind(m, [](auto a, auto b) {return a.Y < b.Y;});}
@@ -47,16 +45,21 @@ template <typename T> auto mapMinVal(T& m) {return mapFind(m, [](auto a, auto b)
 
 #pragma endregion
 
-#define MULTI_TEST
+// #define MULTI_TEST
 
 void run() {
-    int n;
-    cin >> n;
+    int n; cin >> n;
+    string s; cin >> s;
+    map<string, int> a;
+
+    for (int i = 0; i < n - 1; i++) {
+        a[s.substr(i, 2)]++;
+    }
+
+    cout << mapMaxVal(a)->X;
 }
 
 int main() {
-    cout.precision(17);
-
 #ifdef MULTI_TEST
     size_t t;
     cin >> t;

@@ -47,11 +47,51 @@ template <typename T> auto mapMinVal(T& m) {return mapFind(m, [](auto a, auto b)
 
 #pragma endregion
 
-#define MULTI_TEST
+// #define MULTI_TEST
+
+int eval(sv s) {
+    int pos = 10;
+    for (auto c: s) {
+        if (c == '+') {
+            pos++;
+        } else {
+            pos--;
+        }
+    }
+    return pos;
+}
 
 void run() {
-    int n;
-    cin >> n;
+    str s; cin >> s;
+    auto targetPos = eval(s);
+    cin >> s;
+
+    vec2(double, a, 11, 21, 0);
+    a[0][10] = 1;
+    int i = 0;
+    for (auto c : s) {
+        i++;
+        if (c == '+') {
+            for (int j = 1; j < 21; j++) {
+                a[i][j] = a[i-1][j-1];
+            }
+        }
+        if (c == '-') {
+            for (int j = 0; j < 20; j++) {
+                a[i][j] = a[i-1][j+1];
+            }
+        }
+        if (c == '?') {
+            for (int j = 1; j < 21; j++) {
+                a[i][j] = a[i-1][j-1] / 2.0;
+            }
+            for (int j = 0; j < 20; j++) {
+                a[i][j] += a[i-1][j+1] / 2.0;
+            }
+        }
+    }
+
+    cout << a[i][targetPos] << endl;
 }
 
 int main() {

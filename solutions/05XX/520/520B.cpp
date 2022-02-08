@@ -1,7 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <set>
-#include <map>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -9,9 +6,6 @@ using namespace std;
 
 using LL = long long;
 using ULL = unsigned long long;
-
-#define X first
-#define Y second
 
 #define SORT(x) sort(x.begin(), x.end())
 #define RSORT(x) sort(x.rbegin(), x.rend())
@@ -34,29 +28,42 @@ template <typename T> string toStr(T x) {return to_string(x);}
 LL str2int(string s) {return stoll(s);}
 ULL str2uint(string s) {return stoull(s);}
 
-using str = string;
-using sv = string_view;
-
-#define vec2(T, V, M, N, X) vector<vector<T>> V(M, vector<T>(N, X))
-
-template <typename T, typename F> auto mapFind(T& m, F f) {return std::max_element(m.begin(), m.end(), f);}
-template <typename T> auto mapMaxKey(T& m) {return mapFind(m, [](auto a, auto b) {return a.X < b.X;});}
-template <typename T> auto mapMaxVal(T& m) {return mapFind(m, [](auto a, auto b) {return a.Y < b.Y;});}
-template <typename T> auto mapMinKey(T& m) {return mapFind(m, [](auto a, auto b) {return a.X > b.X;});}
-template <typename T> auto mapMinVal(T& m) {return mapFind(m, [](auto a, auto b) {return a.Y > b.Y;});}
-
 #pragma endregion
 
-#define MULTI_TEST
+// #define MULTI_TEST
+
+int solve(int n, int m) {
+    vector<int> a(max(m, n) * 2 + 1, 999999);
+    
+    auto dfs = [&](int i, int k, auto&& dfs) {
+        if (i < 0) {
+            return;
+        }
+        if (i > 2 * m && i > 2 * n) {
+            return;
+        }
+
+        if (a[i] <= k) {
+            return;
+        };
+        a[i] = k;
+
+        dfs(i * 2, k + 1, dfs);
+        dfs(i - 1, k + 1, dfs);
+    };
+
+    dfs(n, 0, dfs);
+
+    return a[m];
+}
 
 void run() {
-    int n;
-    cin >> n;
+    int n, m;
+    cin >> n >> m;
+    cout << solve(n, m) << endl;
 }
 
 int main() {
-    cout.precision(17);
-
 #ifdef MULTI_TEST
     size_t t;
     cin >> t;
