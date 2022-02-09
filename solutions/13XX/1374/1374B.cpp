@@ -47,20 +47,29 @@ template <typename T> auto mapMinVal(T& m) {return mapFind(m, [](auto a, auto b)
 
 #pragma endregion
 
-// #define SINGLE_TEST
-// #define MULTI_TEST
+#define MULTI_TEST
 
 void run() {
     int n;
     cin >> n;
+
+    int ans = 0;
+    while (n > 1) {
+        ans++;
+        if (n % 6 == 0) {
+            n /= 6;
+        } else if (n % 3 == 0) {
+            n *= 2;
+        } else {
+            cout << "-1\n";
+            return;
+        }
+    }
+    cout << ans << endl;
 }
 
 int main() {
     cout.precision(17);
-
-#ifdef SINGLE_TEST
-    run();
-#endif
 
 #ifdef MULTI_TEST
     size_t t;
@@ -68,5 +77,7 @@ int main() {
     while (t--) {
         run();
     }
+#else
+    run();
 #endif
 }
