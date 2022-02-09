@@ -92,18 +92,19 @@ def get_words(file_path):
 def run_solution(solution_path, input_path, output_path):
     with open(input_path) as fin:
         with open(output_path, 'w') as fout:               
-            subprocess.run([solution_path], stdin=fin, stdout=fout, timeout=5)
+            subprocess.run([solution_path], stdin=fin, stdout=fout, timeout=2)
 
 def check_answer(output_path, answer_path):
     output_words = get_words(output_path)
     answer_words = get_words(answer_path)
-    for out, ans in zip(output_words, answer_words):
+    idx = 1
+    for idx, out, ans in zip(range(1, 2**20), output_words, answer_words):
         if out != ans:
-            print(f'Wrong answer: expected {ans}, got {out}')
+            print(f'Wrong answer at token {idx}: expected {ans}, got {out}')
             print("FAILED")
             return
     for ans in answer_words:
-        print(f'Wrong answer: expected {ans}, got EOF')
+        print(f'Wrong answer at token {idx}: expected {ans}, got EOF')
         print("FAILED")
         return
     print("PASSED")
@@ -140,14 +141,16 @@ def handle_args(args):
         case _:
             raise ValueError(f'Invalid subcommand {args.subcommand}')
 
-
 def main():
-    set_workdir()
-    config = load_config()
-    parser = build_args_parser(config)
-    args = parser.parse_args()
-    handle_args(args)
-    save_config(config, args)
+    try:
+        set_workdir()
+        config = load_config()
+        parser = build_args_parser(config)
+        args = parser.parse_args()
+        handle_args(args)
+        save_config(config, args)
+    except subprocess.TimeoutExpired:
+        print("Time limit exceeded (2s)")
 
 if __name__ == '__main__':
     main()
