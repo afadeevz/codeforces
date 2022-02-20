@@ -47,7 +47,7 @@ def parse_task_id(task_id):
     if pos >= len(task_id):
         raise ValueError(f'Invalid task ID {task_id}')
 
-    return task_id[0 : pos], task_id[pos]
+    return task_id[0 : pos], task_id[pos:]
 
 def gen_solution_path(contest, task_letter):
     hundreds = int(contest) // 100
